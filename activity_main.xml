@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://tools.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".MainActivity">
+    android:fillViewport="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,110 +11,80 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Добавить в Вишлист"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:text="Wishlist"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
         <EditText
-            android:id="@+id/etTitle"
+            android:id="@+id/nameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Название товара"
-            android:inputType="textCapSentences" />
-        <EditText
-            android:id="@+id/etUrl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ссылка на сайт"
-            android:inputType="textUri"
-            android:layout_marginTop="8dp"/>
-        <TextView
-            android:id="@+id/tvPriceLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Желаемая цена: 0 руб."
-            android:layout_marginTop="16dp"
-            android:textStyle="bold"/>
+            android:layout_marginTop="16dp"/>
+
         <SeekBar
-            android:id="@+id/sbPrice"
+            android:id="@+id/priceSeek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="100000"
-            android:progress="0"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="16dp"
+            android:max="50000" />
+
         <TextView
+            android:id="@+id/priceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Приоритет:"
-            android:layout_marginTop="16dp"
-            android:textStyle="bold"/>
+            android:text="Цена: 0 руб"/>
         <RadioGroup
-            android:id="@+id/rgPriority"
+            android:id="@+id/priorityGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="16dp">
             <RadioButton
-                android:id="@+id/rbHigh"
+                android:id="@+id/priorityHigh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Очень хочу"
+                android:text="Высокий"
                 android:checked="true"/>
             <RadioButton
-                android:id="@+id/rbMedium"
+                android:id="@+id/priorityMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Хочу" />
+                android:text="Средний"/>
             <RadioButton
-                android:id="@+id/rbLow"
+                android:id="@+id/priorityLow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Может быть" />
+                android:text="Низкий"/>
         </RadioGroup>
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switchTrackPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Отслеживать цену (в будущих обновлениях)"
-            android:layout_marginTop="16dp"/>
         <Button
-            android:id="@+id/btnAddWish"
+            android:id="@+id/addButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Добавить в список"
+            android:text="Добавить"
             android:layout_marginTop="16dp"/>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="?android:attr/listDivider"
-            android:layout_marginVertical="24dp"/>
         <TextView
-            android:id="@+id/tvTotalCost"
+            android:id="@+id/totalText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Общая стоимость купленного: 0 / Накоплено: 0%"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:text="Куплено: 0 | Всего: 0"
+            android:layout_marginTop="16dp"/>
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="0"
-            android:layout_marginBottom="16dp"/>
+            android:max="100"/>
         <Button
-            android:id="@+id/btnClearPurchased"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/holo_red_dark"
             android:text="Удалить купленные"
-            android:layout_gravity="end"/>
+            android:layout_marginTop="16dp"/>
         <LinearLayout
             android:id="@+id/listContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"/>
     </LinearLayout>
 </ScrollView>
