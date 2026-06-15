@@ -1,130 +1,87 @@
-package com.example.myapplication
+package com.example.wishlistapp
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.materialswitch.MaterialSwitch
-data class WishItem(
-    val title: String,
-    val price: Int,
-    val url: String,
-    val priority: String,
-    val trackPrice: Boolean,
-    var isPurchased: Boolean = false
-)
-class MainActivity : AppCompatActivity()
-{
-    private val wishlist = mutableListOf<WishItem>()
-    private var currentSelectedPrice = 0
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+class MainActivity : AppCompatActivity() {
+    data class WishItem(
+        val name: String,
+        val price: Int,
+        val priority: String,
+        var isBought: Boolean = false
+    )
+    private val items = mutableListOf<WishItem>()
+    private var currentPrice = 0
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val etTitle = findViewById<EditText>(R.id.etTitle)
-        val etUrl = findViewById<EditText>(R.id.etUrl)
-        val tvPriceLabel = findViewById<TextView>(R.id.tvPriceLabel)
-        val sbPrice = findViewById<SeekBar>(R.id.sbPrice)
-        val rgPriority = findViewById<RadioGroup>(R.id.rgPriority)
-        val switchTrackPrice = findViewById<MaterialSwitch>(R.id.switchTrackPrice)
-        val btnAddWish = findViewById<Button>(R.id.btnAddWish)
+        val nameInput = findViewById<EditText>(R.id.nameInput)
+        val priceSeek = findViewById<SeekBar>(R.id.priceSeek)
+        val priceText = findViewById<TextView>(R.id.priceText)
+        val priorityGroup = findViewById<RadioGroup>(R.id.priorityGroup)
+        val addButton = findViewById<Button>(R.id.addButton)
         val listContainer = findViewById<LinearLayout>(R.id.listContainer)
-        val tvTotalCost = findViewById<TextView>(R.id.tvTotalCost)
+        val totalText = findViewById<TextView>(R.id.totalText)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        val btnClearPurchased = findViewById<Button>(R.id.btnClearPurchased)
-        sbPrice.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener
-        {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
-            {
-                currentSelectedPrice = progress
-                tvPriceLabel.text = "Желаемая цена: $currentSelectedPrice руб."
+        val deleteButton = findViewById<Button>(R.id.deleteButton)
+        priceSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seek: SeekBar?, progress: Int, fromUser: Boolean) {
+                currentPrice = progress
+                priceText.text = "Цена: $currentPrice руб"
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seek: SeekBar?) {}
+            override fun onStopTrackingTouch(seek: SeekBar?) {}
         })
-        btnAddWish.setOnClickListener {
-            val title = etTitle.text.toString().trim()
-            val url = etUrl.text.toString().trim()
-            if (title.isEmpty())
-            {
-                Toast.makeText(this@MainActivity, "Введите название товара!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        addButton.setOnClickListener {
+            val name = nameInput.text.toString().trim()
+            if (name.isNotEmpty()) {
+                val priority = when (priorityGroup.checkedRadioButtonId) {
+                    R.id.priorityHigh -> "Высокий"
+                    R.id.priorityMedium -> "Средний"
+                    else -> "Низкий"
+                }
+                items.add(WishItem(name, currentPrice, priority))
+                nameInput.text.clear()
+                priceSeek.progress = 0
+                updateList(listContainer, totalText, progressBar)
+            } else {
+                Toast.makeText(this, "Введите название", Toast.LENGTH_SHORT).show()
             }
-            val selectedRadioId = rgPriority.checkedRadioButtonId
-            val radioButton = findViewById<RadioButton>(selectedRadioId)
-            val priority = radioButton?.text.toString()
-            val isTracking = switchTrackPrice.isChecked
-            val newItem = WishItem(title, currentSelectedPrice, url, priority, isTracking)
-            wishlist.add(newItem)
-            etTitle.text.clear()
-            etUrl.text.clear()
-            sbPrice.progress = 0
-            switchTrackPrice.isChecked = false
-            updateWishListUI(listContainer, tvTotalCost, progressBar)
-            Toast.makeText(this@MainActivity, "Добавлено: $title", Toast.LENGTH_SHORT).show()
         }
-        btnClearPurchased.setOnClickListener {
-            if (wishlist.none { it.isPurchased })
-            {
-                Toast.makeText(this@MainActivity, "Нет купленных товаров для удаления", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        deleteButton.setOnClickListener {
+            if (items.any { it.isBought }) {
+                AlertDialog.Builder(this)
+                    .setTitle("Подтверждение")
+                    .setMessage("Удалить купленные товары?")
+                    .setPositiveButton("Да") { _, _ ->
+                        items.removeAll { it.isBought }
+                        updateList(listContainer, totalText, progressBar)
+                    }
+                    .setNegativeButton("Нет", null)
+                    .show()
+            } else {
+                Toast.makeText(this, "Нет купленных товаров", Toast.LENGTH_SHORT).show()
             }
-            AlertDialog.Builder(this@MainActivity)
-                .setTitle("Подтверждение удаления")
-                .setMessage("Вы уверены, что хотите удалить все купленные товары из списка?")
-                .setPositiveButton("Удалить") { dialog, _ ->
-                    wishlist.removeAll { it.isPurchased }
-                    updateWishListUI(listContainer, tvTotalCost, progressBar)
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Отмена") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .create()
-                .show()
         }
     }
-    private fun updateWishListUI(container: LinearLayout, tvTotal: TextView, progress: ProgressBar)
-    {
+    private fun updateList(container: LinearLayout, totalText: TextView, progressBar: ProgressBar) {
         container.removeAllViews()
-        var totalSum = 0
-        var purchasedSum = 0
         val inflater = LayoutInflater.from(this)
-        for (item in wishlist)
-        {
-            totalSum += item.price
-            if (item.isPurchased)
-            {
-                purchasedSum += item.price
-            }
-            val itemView = inflater.inflate(R.layout.item_wish, container, false)
-            val cbPurchased = itemView.findViewById<CheckBox>(R.id.cbPurchased)
-            val tvItemTitle = itemView.findViewById<TextView>(R.id.tvItemTitle)
-            val tvItemDetails = itemView.findViewById<TextView>(R.id.tvItemDetails)
-            val tvItemUrl = itemView.findViewById<TextView>(R.id.tvItemUrl)
-            tvItemTitle.text = item.title
-            tvItemDetails.text = "Цена: ${item.price} руб. | Приоритет: ${item.priority}"
-            if (item.url.isNotEmpty())
-            {
-                tvItemUrl.text = item.url
-                tvItemUrl.visibility = View.VISIBLE
-            }
-            cbPurchased.isChecked = item.isPurchased
-            cbPurchased.setOnCheckedChangeListener { _, isChecked ->
-                item.isPurchased = isChecked
-                recalculateProgress(wishlist, tvTotal, progress)
-            }
-            container.addView(itemView)
+        for (item in items) {
+            val view = inflater.inflate(android.R.layout.simple_list_item_multiple_choice, container, false)
+            val text1 = view.findViewById<TextView>(android.R.id.text1)
+            text1.text = "${item.name} — ${item.price} руб [${item.priority}]"
+            container.addView(view)
         }
-        recalculateProgress(wishlist, tvTotal, progress)
+        updateTotals(totalText, progressBar)
     }
-    private fun recalculateProgress(list: List<WishItem>, tvTotal: TextView, progress: ProgressBar)
-    {
-        val totalSum = list.sumOf { it.price }
-        val purchasedSum = list.sumOf { if (it.isPurchased) it.price else 0 }
-        val percentage = if (totalSum > 0) ((purchasedSum.toFloat() / totalSum.toFloat()) * 100).toInt() else 0
-        tvTotal.text = "Куплено: $purchasedSum руб. из $totalSum руб."
-        progress.progress = percentage
+    private fun updateTotals(totalText: TextView, progressBar: ProgressBar) {
+        val total = items.sumOf { it.price }
+        val bought = items.sumOf { if (it.isBought) it.price else 0 }
+        val percent = if (total > 0) (bought * 100 / total) else 0
+        totalText.text = "Куплено: $bought | Всего: $total"
+        progressBar.progress = percent
     }
 }
