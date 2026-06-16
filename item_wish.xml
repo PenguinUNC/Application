@@ -4,7 +4,9 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="12dp"
-    android:layout_marginBottom="4dp">
+    android:background="#FFFFFF"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -16,37 +18,44 @@
             android:id="@+id/tvWishTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Название" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#1976D2"
+            android:text="Название товара" />
 
         <TextView
             android:id="@+id/tvWishUrl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#555555"
+            android:layout_marginTop="2dp"
             android:text="Ссылка" />
 
         <TextView
-            android:id="@+id/tvWishStatus"
+            android:id="@+id/tvWishTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Статус: Ожидает" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="end">
+            android:textSize="11sp"
+            android:textColor="#777777"
+            android:layout_marginTop="2dp"
+            android:text="Время: 00:00" />
 
         <TextView
             android:id="@+id/tvWishPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32"
+            android:layout_marginTop="4dp"
             android:text="0 ₽" />
-
-        <Button
-            android:id="@+id/btnTransitStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="В пути" />
     </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/cbPurchased"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Куплено"
+        android:textSize="12sp" />
 </LinearLayout>
