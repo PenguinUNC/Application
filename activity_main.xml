@@ -1,118 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:background="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Сумма:" />
+                android:text="Баланс по умолчанию: 5000 ₽"
+                android:textColor="#333333"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/tvTotalCost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 ₽"
+                android:text="Общая стоимость: 0 ₽"
                 android:textColor="#2E7D32"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:textSize="18sp"
+                android:layout_marginTop="4dp" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="end">
             <TextView
                 android:id="@+id/tvProgressPercent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="В пути: 0%" />
+                android:text="Накоплено: 0%"
+                android:textColor="#555555"
+                android:layout_marginTop="8dp" />
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:max="100"
                 android:progress="0" />
         </LinearLayout>
-    </LinearLayout>
 
-    <EditText
-        android:id="@+id/etWishName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Название товара" />
+        <EditText
+            android:id="@+id/etWishName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Название товара"
+            android:textColor="#212121" />
 
-    <EditText
-        android:id="@+id/etWishUrl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ссылка на сайт" />
+        <EditText
+            android:id="@+id/etWishUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ссылка на сайт"
+            android:textColor="#212121"
+            android:layout_marginTop="8dp" />
 
-    <TextView
-        android:id="@+id/tvPriceValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Цена: 0 ₽" />
+        <TextView
+            android:id="@+id/tvPriceValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Желаемая цена: 0 ₽"
+            android:textColor="#212121"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
 
-    <SeekBar
-        android:id="@+id/seekBarPrice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="5000" />
+        <SeekBar
+            android:id="@+id/seekBarPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100000"
+            android:layout_marginTop="4dp" />
 
-    <RadioGroup
-        android:id="@+id/rgPriority"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <RadioButton android:id="@+id/rbHigh" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Очень хочу" android:checked="true"/>
-    </RadioGroup>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Приоритет:"
+            android:textColor="#212121"
+            android:layout_marginTop="12dp" />
 
-    <Switch
-        android:id="@+id/switchTrack"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Отслеживать цену" />
+        <RadioGroup
+            android:id="@+id/rgPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbHigh" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Очень хочу" android:checked="true" />
+            <RadioButton android:id="@+id/rbMedium" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Хочу" />
+            <RadioButton android:id="@+id/rbLow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Может быть" />
+        </RadioGroup>
 
-    <Button
-        android:id="@+id/btnAddWish"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Добавить в список" />
+        <Switch
+            android:id="@+id/switchTrack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Отслеживать цену"
+            android:textColor="#212121"
+            android:layout_marginTop="12dp" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        <Button
+            android:id="@+id/btnAddWish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Добавить в вишлист"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ваш список желаний:"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp" />
+
         <LinearLayout
             android:id="@+id/wishListContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
-    </ScrollView>
 
-    <Button
-        android:id="@+id/btnClearPurchased"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Удалить купленные" />
-</LinearLayout>
+        <Button
+            android:id="@+id/btnClearPurchased"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Удалить все купленные"
+            android:backgroundTint="#D32F2F"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="24dp" />
+    </LinearLayout>
+</ScrollView>
