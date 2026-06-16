@@ -2,7 +2,6 @@ package com.example.marketplace
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -28,7 +27,7 @@ data class WishItem(
 class MainActivity : AppCompatActivity()
 {
     private val wishList = mutableListOf<WishItem>()
-    private val maxBudget = 5000 // Твой баланс 5000 ₽
+    private val maxBudget = 5000
 
     private fun getID(name: String, type: String): Int
     {
@@ -38,8 +37,7 @@ class MainActivity : AppCompatActivity()
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        val resActivityMain = getID("activity_main", "layout")
-        setContentView(resActivityMain)
+        setContentView(getID("activity_main", "layout"))
 
         val etName = findViewById<EditText>(getID("etWishName", "id"))
         val etUrl = findViewById<EditText>(getID("etWishUrl", "id"))
@@ -51,21 +49,24 @@ class MainActivity : AppCompatActivity()
         val btnClearPurchased = findViewById<Button>(getID("btnClearPurchased", "id"))
         val wishListContainer = findViewById<LinearLayout>(getID("wishListContainer", "id"))
 
-        seekBarPrice.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener
+        if (seekBarPrice != null && tvPriceValue != null)
         {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
+            seekBarPrice.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener
             {
-                tvPriceValue.text = "Цена: $progress ₽"
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
+                {
+                    tvPriceValue.text = "Цена: $progress ₽"
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+        }
 
-        btnAddWish.setOnClickListener {
-            val name = etName.text.toString().trim()
-            val url = etUrl.text.toString().trim()
-            val price = seekBarPrice.progress
-            val trackPrice = switchTrack.isChecked
+        btnAddWish?.setOnClickListener {
+            val name = etName?.text?.toString()?.trim() ?: ""
+            val url = etUrl?.text?.toString()?.trim() ?: ""
+            val price = seekBarPrice?.progress ?: 0
+            val trackPrice = switchTrack?.isChecked ?: false
 
             if (name.isEmpty())
             {
@@ -73,21 +74,24 @@ class MainActivity : AppCompatActivity()
                 return@setOnClickListener
             }
 
-            val selectedId = rgPriority.checkedRadioButtonId
+            val selectedId = rgPriority?.checkedRadioButtonId ?: -1
             val radioButton = findViewById<RadioButton>(selectedId)
             val priority = radioButton?.text?.toString() ?: "Хочу"
 
             wishList.add(WishItem(name, price, url, priority, trackPrice, isInTransit = false))
 
-            etName.setText("")
-            etUrl.setText("")
-            seekBarPrice.progress = 0
-            switchTrack.isChecked = false
+            etName?.setText("")
+            etUrl?.setText("")
+            seekBarPrice?.progress = 0
+            switchTrack?.isChecked = false
 
-            renderList(wishListContainer)
+            if (wishListContainer != null)
+            {
+                renderList(wishListContainer)
+            }
         }
 
-        btnClearPurchased.setOnClickListener {
+        btnClearPurchased?.setOnClickListener {
             if (wishList.none { it.isInTransit })
             {
                 Toast.makeText(this, "Нет товаров в пути!", Toast.LENGTH_SHORT).show()
@@ -97,9 +101,12 @@ class MainActivity : AppCompatActivity()
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Очистка")
             builder.setMessage("Удалить из списка все товары со статусом «В пути»?")
-            builder.setPositiveButton("Да") { dialog, _ ->
+            builder.setPositiveButton("Да") { _, _ ->
                 wishList.removeAll { it.isInTransit }
-                renderList(wishListContainer)
+                if (wishListContainer != null)
+                {
+                    renderList(wishListContainer)
+                }
             }
             builder.setNegativeButton("Нет", null)
             builder.create().show()
@@ -111,16 +118,17 @@ class MainActivity : AppCompatActivity()
     private fun renderList(container: LinearLayout)
     {
         container.removeAllViews()
+        val inflater = LayoutInflater.from(this)
 
         val resLayoutId = getID("item_wish", "layout")
-        if (resLayoutId == 0) return
-
-        val inflater = LayoutInflater.from(this)
         val resTitleId = getID("tvWishTitle", "id")
         val resUrlId = getID("tvWishUrl", "id")
         val resPriceId = getID("tvWishPrice", "id")
         val resStatusId = getID("tvWishStatus", "id")
         val resBtnTransitId = getID("btnTransitStatus", "id")
+        if (resLayoutId == 0) return
+
+        var itemCounter = 1
 
         for (item in wishList)
         {
@@ -129,30 +137,40 @@ class MainActivity : AppCompatActivity()
             val tvUrl = itemView.findViewById<TextView>(resUrlId)
             val tvPrice = itemView.findViewById<TextView>(resPriceId)
             val tvStatus = itemView.findViewById<TextView>(resStatusId)
-            val btnTransit = itemView.findViewById<Button>(resBtnTransitId)
+            val btnTransit = itemView.findViewById<Button>(resBtnTransitId
+            if (tvTitle != null) {
+                tvTitle.text = "Товар $itemCounter"
+                tvTitle.setTextColor(0xFF1976D2.toInt()) // Принудительно синий цвет
+            }
+            itemCounter++
 
-            tvTitle.text = item.name
-            tvUrl.text = if (item.url.isEmpty()) "Ссылка отсутствует" else item.url
-            tvPrice.text = "${item.price} ₽"
+            if (tvUrl != null) tvUrl.text = if (item.url.isEmpty()) "Ссылка отсутствует" else item.url
+            if (tvPrice != null) tvPrice.text = "${item.price} ₽"
 
-            if (item.isInTransit) {
-                tvStatus.text = "Статус: В пути 🚚"
-                btnTransit.text = "Вернуть"
-            } else {
-                tvStatus.text = "Статус: Ожидает"
-                btnTransit.text = "В пути"
+            if (tvStatus != null && btnTransit != null)
+            {
+                if (item.isInTransit)
+                {
+                    tvStatus.text = "Статус: В пути 🚚"
+                    btnTransit.text = "Вернуть"
+                }
+                else
+                {
+                    tvStatus.text = "Статус: Ожидает"
+                    btnTransit.text = "В пути"
+                }
             }
 
-            btnTransit.setOnClickListener {
+            btnTransit?.setOnClickListener {
                 item.isInTransit = !item.isInTransit
                 renderList(container)
             }
 
-            itemView.setOnLongClickListener {
+            itemView?.setOnLongClickListener {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("Удаление товара")
-                builder.setMessage("Удалить «${item.name}»?")
-                builder.setPositiveButton("Удалить") { dialog, _ ->
+                builder.setMessage("Удалить этот товар?")
+                builder.setPositiveButton("Удалить") { _, _ ->
                     wishList.remove(item)
                     renderList(container)
                 }
